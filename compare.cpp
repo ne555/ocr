@@ -4,7 +4,7 @@ using namespace std;
 
 int main(int argc, char **argv){
 	ifstream a(argv[1]), b(argv[2]);
-	char ca, cb;
+	int ca, cb;
 	int count = 0;
 	while( a>>ca and b>>cb )
 		if( ca == cb )
