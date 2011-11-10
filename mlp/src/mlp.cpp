@@ -94,6 +94,8 @@ int main(int argc, char **argv){
 	if(train_file){
 		ifstream train(train_file);
 		benchmark->read(train);
+		cerr << "Entrenamiento\n";
+		cerr << "Epocas " << epoch << "\t alfa " << alpha << "\t momentum " << momentum << '\n';
 		int cant = benchmark->train(epoch, success, 0.2);
 		if(cant == -1) cerr << "No hubo convergencia" <<endl;
 		else cerr << "Convergencia en " << cant << " epocas" << endl;
