@@ -71,8 +71,6 @@ float simulator::test(){ //devolver el error en las salidas
 	int acierto=0;
 	for(size_t K=0; K<input.size(); ++K){
 		vector sal=red.output(input[K]);
-		//if( math::sign(sal) == math::sign(result[K][0]) )
-		//if( equal_sign(sal, result[K]) )
 		if( clase(sal) == clase(result[K]) )
 			acierto++;
 	}
@@ -94,15 +92,20 @@ int simulator::train(size_t cant, float success_rate, float error_umbral){
 }
 
 void simulator::classify(std::ostream &output){
-	for(size_t L=0; L<input.size(); ++L){
-		vector sal=red.output(input[L]);
-		output << clase(sal) << ' ';
+	for(size_t K=0; K<input.size(); ++K){
+		vector sal=red.output(input[K]);
+		output << clase(sal) << '\n';
 	}
 }
 
 size_t simulator::clase(const vector &v){
-	for(size_t K=0; K<v.size(); ++K)
-		if(v[K]>0) return K;
-	return v.size();
+	int how_much = 0, index;
+	for(size_t K=0; K<v.size()-1; ++K)
+		if(v[K]>0){
+			how_much++;
+			index=K;
+		}
+	if(how_much == 1) return index;
+	return v.size()-1;
 }
 
