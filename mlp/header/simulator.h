@@ -2,9 +2,10 @@
 #define SIMULATOR_H
 
 #include <vector>
+#include <iostream>
 #include "network.h"
+#include "median.h"
 
-	#include <iostream>
 class simulator{
 public:
 	typedef network::value_type value_type;
@@ -13,7 +14,7 @@ public:
 	typedef std::vector<vector> matrix;
 	typedef std::vector<network> container;
 
-	simulator(size_t percepciones, size_t salidas);
+	simulator(size_t percepciones, size_t inter, size_t salidas);
 	simulator(std::istream&);
 	void read(std::istream &in);
 
@@ -31,10 +32,12 @@ private:
 	bool done(float success, float error);
 	static size_t clase(const vector &v);
 
-	matrix input, result;
+	matrix input, intermezzo, result;
+	std::vector<size_t> label;
 	network red;
+	median preproceso;
 
-	size_t percepciones, salidas;
+	size_t percepciones, salidas, inter;
 };
 
 #endif

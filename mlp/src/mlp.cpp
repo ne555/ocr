@@ -34,8 +34,6 @@ void usage (int status)
 	exit (status);
 }
 
-void test_serialization(bool input);
-
 int main(int argc, char **argv){
 	//Entrada n p s
 	//n = cantidad de ejemplos
@@ -78,7 +76,7 @@ int main(int argc, char **argv){
 	}
 	else{
 		cin>>p>>s;
-		benchmark = new simulator (p,s);
+		benchmark = new simulator (p,s,s);
 
 		// Agregar capas
 		int capas;
@@ -117,28 +115,5 @@ int main(int argc, char **argv){
 	benchmark->serialize(cout);
 	delete benchmark;
 	return EXIT_SUCCESS;
-}
-
-void test_serialization(bool input){
-	if(input){
-		simulator test(cin);
-	}
-	else{
-		int p, s;
-		cin >> p >> s;
-		simulator test(p,s);
-		// Agregar capas
-		float alpha = 0.1, momentum = 0.5;
-		int capas;
-		cin >> capas;
-		for (int K = 0; K < capas; K++) {
-			int neuronas;
-			cin >> neuronas;
-			test.addlayer(neuronas,alpha,momentum);
-		}
-		test.addlayer(s,alpha,momentum);
-
-		test.serialize(cout);
-	}
 }
 

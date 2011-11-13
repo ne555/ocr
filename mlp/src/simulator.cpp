@@ -12,10 +12,12 @@ using namespace std;
 using math::sign;
 using math::sigmoid;
 
-simulator::simulator(size_t percepciones, size_t salidas):
+simulator::simulator(size_t percepciones, size_t inter, size_t salidas):
 	percepciones(percepciones),
+	inter(inter),
 	salidas(salidas),
-	red(percepciones, salidas)
+	preproceso(percepciones, inter),
+	red(inter, salidas)
 	{}
 
 void simulator::addlayer(size_t n, value_type alpha, value_type momentum){
@@ -27,7 +29,7 @@ void simulator::serialize(std::ostream &out) const{
 	out << percepciones << ' ' << salidas << '\n';	
 }
 	
-simulator::simulator(std::istream &in): red(in){
+simulator::simulator(std::istream &in): red(in), preproceso(-1,-1){ //crash
 	in >> percepciones >> salidas;
 }
 
@@ -36,9 +38,13 @@ void simulator::read(std::istream &in){
 	int patrones;
 	in >> patrones;
 	in.ignore( numeric_limits<streamsize>::max(), '\n' );
-	input.clear(); result.clear();
-	input.resize(patrones, vector(percepciones+1));
+	input.clear(); intermezzo.clear(); result.clear();
+	label.clear();
+
+	input.resize(patrones, vector(percepciones));
+	intermezzo.resize(patrones, vector(inter+1));
 	result.resize(patrones, vector(-1, salidas+1) );
+	label.resize(patrones);
 
 	for(size_t K=0; K<patrones; ++K){
 		for(size_t L=0; L<percepciones; ++L)
@@ -46,6 +52,7 @@ void simulator::read(std::istream &in){
 
 		int clase;
 		in>>clase;
+		label[K] = clase;
 		result[K][clase] = 1;
 		
 		input[K][percepciones] = 1; //entrada extendida
@@ -60,20 +67,11 @@ bool simulator::done(float success, float tol){
 	return acierto>success;
 }
 
-static bool equal_sign( const simulator::vector &a, const simulator::vector &b){
-	for(size_t K=0; K<a.size(); ++K)
-		if( math::sign(a[K]) != math::sign(b[K]) )
-			return false;
-	return true;
-}
-
 float simulator::test(){ //devolver el error en las salidas
 	int acierto=0;
 	for(size_t K=0; K<input.size(); ++K){
-		vector sal=red.output(input[K]);
-		//if( math::sign(sal) == math::sign(result[K][0]) )
-		//if( equal_sign(sal, result[K]) )
-		if( clase(sal) == clase(result[K]) )
+		vector sal=red.output( preproceso.output(input[K]) );
+		if( clase(sal) == label[K] )
 			acierto++;
 	}
 	cerr <<  acierto << ' ' << float(acierto)/input.size() << '\n';
@@ -82,9 +80,14 @@ float simulator::test(){ //devolver el error en las salidas
 
 int simulator::train(size_t cant, float success_rate, float error_umbral){
 	cerr << "inicio del entrenamiento\n";
+
+	preproceso.train(input, label);
+	for(size_t K=0; K<input.size(); ++K)
+		intermezzo[K] = preproceso.output(input[K]);
+
 	for(size_t epoch=0; epoch<cant; ++epoch){
-		for(size_t K=0; K<input.size(); ++K)
-			red.train(input[K], result[K]);
+		for(size_t K=0; K<intermezzo.size(); ++K)
+			red.train(intermezzo[K], result[K]);
 		
 		cerr << "T " << epoch << ' ' ;
 		if( done(success_rate, error_umbral) )
@@ -94,9 +97,9 @@ int simulator::train(size_t cant, float success_rate, float error_umbral){
 }
 
 void simulator::classify(std::ostream &output){
-	for(size_t L=0; L<input.size(); ++L){
-		vector sal=red.output(input[L]);
-		output << clase(sal) << ' ';
+	for(size_t K=0; K<input.size(); ++K){
+		vector sal=red.output( preproceso.output(input[K]) );
+		output << clase(sal) << '\n';
 	}
 }
 
