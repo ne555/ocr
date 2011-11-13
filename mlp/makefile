@@ -6,7 +6,7 @@ headerdir = header
 bindir = bin
 bin = $(bindir)/mlp.bin
 
-obj_mlp = mlp.o neurona.o simulator.o capa.o network.o
+obj_mlp = mlp.o neurona.o simulator.o capa.o network.o median.o
 
 object_mlp = $(addprefix $(objdir)/,$(obj_mlp))
 
@@ -19,8 +19,8 @@ bin/mlp.bin: $(object_mlp)
 	$(CXX) $(LIBRARIES_mlp) $(object_mlp) -o $@
 
 $(objdir)/capa.o: $(addprefix $(headerdir)/,neurona.h math_vector.h capa.h util.h)
+#$(objdir)/median.o: 
 $(objdir)/mlp.o: $(addprefix $(headerdir)/,simulator.h capa.h math_vector.h neurona.h util.h)
-$(objdir)/input.o: $(addprefix $(headerdir)/,util.h math_vector.h)
 $(objdir)/neurona.o: $(addprefix $(headerdir)/,neurona.h math_vector.h util.h)
 $(objdir)/network.o: $(addprefix $(headerdir)/,network.h capa.h math_vector.h neurona.h util.h)
 $(objdir)/simulator.o: $(addprefix $(headerdir)/,simulator.h network.h capa.h math_vector.h neurona.h util.h)

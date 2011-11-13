@@ -2,9 +2,9 @@
 #define SIMULATOR_H
 
 #include <vector>
+#include <iostream>
 #include "network.h"
 
-	#include <iostream>
 class simulator{
 public:
 	typedef network::value_type value_type;
@@ -32,6 +32,7 @@ private:
 	static size_t clase(const vector &v);
 
 	matrix input, result;
+	std::vector<size_t> label;
 	network red;
 
 	size_t percepciones, salidas;

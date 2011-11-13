@@ -27,7 +27,7 @@ void simulator::serialize(std::ostream &out) const{
 	out << percepciones << ' ' << salidas << '\n';	
 }
 	
-simulator::simulator(std::istream &in): red(in){
+simulator::simulator(std::istream &in): red(in){ //crash
 	in >> percepciones >> salidas;
 }
 
@@ -37,8 +37,11 @@ void simulator::read(std::istream &in){
 	in >> patrones;
 	in.ignore( numeric_limits<streamsize>::max(), '\n' );
 	input.clear(); result.clear();
+	label.clear();
+
 	input.resize(patrones, vector(percepciones+1));
 	result.resize(patrones, vector(-1, salidas+1) );
+	label.resize(patrones);
 
 	for(size_t K=0; K<patrones; ++K){
 		for(size_t L=0; L<percepciones; ++L)
@@ -46,6 +49,7 @@ void simulator::read(std::istream &in){
 
 		int clase;
 		in>>clase;
+		label[K] = clase;
 		result[K][clase] = 1;
 		
 		input[K][percepciones] = 1; //entrada extendida
@@ -58,13 +62,6 @@ void simulator::read(std::istream &in){
 bool simulator::done(float success, float tol){
 	float acierto = test();
 	return acierto>success;
-}
-
-static bool equal_sign( const simulator::vector &a, const simulator::vector &b){
-	for(size_t K=0; K<a.size(); ++K)
-		if( math::sign(a[K]) != math::sign(b[K]) )
-			return false;
-	return true;
 }
 
 float simulator::test(){ //devolver el error en las salidas
@@ -80,6 +77,7 @@ float simulator::test(){ //devolver el error en las salidas
 
 int simulator::train(size_t cant, float success_rate, float error_umbral){
 	cerr << "inicio del entrenamiento\n";
+
 	for(size_t epoch=0; epoch<cant; ++epoch){
 		for(size_t K=0; K<input.size(); ++K)
 			red.train(input[K], result[K]);
