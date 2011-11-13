@@ -55,7 +55,7 @@ void simulator::read(std::istream &in){
 		label[K] = clase;
 		result[K][clase] = 1;
 		
-		input[K][percepciones] = 1; //entrada extendida
+		//input[K][percepciones] = 1; //entrada extendida
 		result[K][salidas] = 1; //entrada extendida
 	}
 
