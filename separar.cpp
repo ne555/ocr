@@ -49,6 +49,10 @@ int main(int argc, char **argv){
 		++cuenta[ clase[K] ];
 	}
 
+	for(size_t K=0; K<cant; ++K)
+		cerr << cuenta[K] << ' ';
+	cerr << '\n';
+
 	for(size_t K=0; K<cant; ++K){
 		out_im[K].seekp( sizeof(int), ios::beg );
 		out_lab[K].seekp( sizeof(int), ios::beg );

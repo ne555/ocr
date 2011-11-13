@@ -99,6 +99,8 @@ int main(int argc, char **argv){
 		int cant = benchmark->train(epoch, success, 0.2);
 		if(cant == -1) cerr << "No hubo convergencia" <<endl;
 		else cerr << "Convergencia en " << cant << " epocas" << endl;
+		ofstream output("train.clase");
+		benchmark->classify(output);
 	}
 
 	if(test_file){

@@ -4,7 +4,7 @@ using namespace std;
 
 typedef unsigned char byte;
 byte luminancia( const matrix2d<byte> &m, int r, int c, int size ){
-	cerr << "Abarca " << r << " -->  " << r+size << '\n';
+	//cerr << "Abarca " << r << " -->  " << r+size << '\n';
 
 	byte count = 0;
 	for(int K=0; K<size; ++K)
@@ -23,8 +23,8 @@ int main(int argc, char **argv){
 	cerr << magic << ' ' << n << ' ' << row << ' ' << column << ' ' <<  endl;
 
 	int factor = 4;
-	int size = 5;
-	int tamanio = 4;
+	int size = 3;
+	int tamanio = 10;
 	
 	cout.write( (char *) &magic, sizeof(magic) );
 	cout.write( (char *) &n, sizeof(n) );
@@ -33,7 +33,7 @@ int main(int argc, char **argv){
 	
 	matrix2d<byte> image(row, column);
 
-	int inicio = 4;
+	int inicio = 5;
 	cerr << "Factor " << factor << "\tsize " << size << "\tinicio " << inicio << '\n';
 	cerr << "Tamanio " << tamanio << '\n';
 
