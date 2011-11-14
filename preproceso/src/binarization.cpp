@@ -1,42 +1,36 @@
 #include <iostream>
 #include <vector>
+#include <cstdlib>
 #include <unistd.h>
 #include <cstdlib>
+#include "matrix.h"
 using namespace std;
 
-template<class T>
-struct matrix3d{
-	typedef T value_type;
-	typedef T* pointer;
-	typedef const T* const_pointer;
-	typedef T& reference;
-	typedef const T& const_reference;
-
-	//value_type *buffer;
-	std::vector<value_type> buffer;
-	const size_t row, column, depth;
-	matrix3d(size_t row, size_t column, size_t depth):
-		row(row), column(column), depth(depth)
-	{
-		buffer.resize( row*column*depth );
+void usage (int status)
+{
+	if (status != EXIT_SUCCESS)
+		cerr << "Try \'-h\' for more information.\n";
+	else{
+		cerr << "Usage: program.bin [-u N] [-n ] < infile > outfile\n";
+		cerr << "Combierte a una imagen binaria segun un umbral\n" << 
+		cerr << "-u N \t Establece el umbral. 128 por defecto\n" << 
+		"-h \t Ayuda del programa\n";
 	}
 
-	pointer data(){
-		return &buffer[0];
-	}
-
-	reference operator()(size_t x, size_t y, size_t z){
-		return buffer[ x*column*depth + y*column + z ];
-	}
-
-	size_t size() const{
-		return buffer.size();
-	}
-	//const_reference operator()(size_t x, size_t y, size_t z) const;
-
-};
+	exit (status);
+}
 
 int main(int argc, char **argv){
+	int option;
+	int umbral = 128;
+    while( (option=getopt(argc, argv, "u:h")) != -1 )
+		switch(option){
+		//case 'n': n=strtol(optarg, NULL, 10); break;
+		case 'u': umbral=strtol(optarg, NULL, 10); break;
+		case 'h': usage(EXIT_SUCCESS); break;
+		default: usage(EXIT_FAILURE);
+		}
+		
 	typedef unsigned char byte;
 	int magic, row, column, n;
 	cin.read( (char *) &magic, sizeof(magic) );
@@ -48,13 +42,6 @@ int main(int argc, char **argv){
 	matrix3d<byte> image(n,row,column), binaria(n,row,column);
 	cin.read( (char *) image.data(), image.size()*sizeof(*image.data()) );
 
-	int option;
-	int umbral = 128;
-    while( (option=getopt(argc, argv, "n:u:")) != -1 )
-		switch(option){
-		case 'n': n=strtol(optarg, NULL, 10); break;
-		case 'u': umbral=strtol(optarg, NULL, 10); break;
-		}
 
 
 	for(size_t K=0; K<n; ++K)

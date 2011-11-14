@@ -2,6 +2,8 @@
 #include <vector>
 #include <cmath>
 #include "matrix.h"
+#include <unistd.h>
+#include <cstdlib>
 using namespace std;
 
 
@@ -10,7 +12,28 @@ inline T square(T x){
 	return x*x;
 }
 
+void usage (int status)
+{
+	if (status != EXIT_SUCCESS)
+		cerr << "Try \'-h\' for more information.\n";
+	else{
+		cerr << "Usage: program.bin < infile \n";
+		cerr << "Muestra el valor medio de cada celda\n" << 
+		"-h \t Ayuda del programa\n";
+	}
+
+	exit (status);
+}
+
 int main(int argc, char **argv){
+	int option;
+	while( (option=getopt(argc, argv, "h")) != -1 ){
+		switch(option){
+		case 'h': usage(EXIT_SUCCESS); break;
+		default: usage(EXIT_FAILURE);
+		}
+	}
+
 	typedef unsigned char byte;
 	int magic, row, column, n;
 	
@@ -34,7 +57,9 @@ int main(int argc, char **argv){
 
 	for(size_t K=0; K<row; ++K){
 		for(size_t L=0; L<column; ++L)
-			cout << sum(K,L)/n << ' ';
+			if( sum(K,L)/(float (n)) > 0.5 ) cout << '*';
+			else cout << ' ';
+			//cout << sum(K,L)/(float (n)) << ' ';
 		cout << endl;
 	}
 	

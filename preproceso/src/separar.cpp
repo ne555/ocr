@@ -1,9 +1,33 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <unistd.h>
+#include <cstdlib>
 using namespace std;
 
+void usage (int status)
+{
+	if (status != EXIT_SUCCESS)
+		cerr << "Try \'-h\' for more information.\n";
+	else{
+		cerr << "Usage: program.bin datafile labelfile\n";
+		cerr << "Separa los archivos segun la clasificacion\n" << 
+		"\t Los archivos generados llevan _separated_[clase] como sufijo\n" <<
+		"-h \t Ayuda del programa\n";
+	}
+
+	exit (status);
+}
+
 int main(int argc, char **argv){
+	int option;
+	while( (option=getopt(argc, argv, "h")) != -1 ){
+		switch(option){
+		case 'h': usage(EXIT_SUCCESS); break;
+		default: usage(EXIT_FAILURE);
+		}
+	}
+
 	const size_t cant = 10;
 	ifstream data(argv[1], ios::binary), label(argv[2], ios::binary);
 	ofstream out_im[cant], out_lab[cant];

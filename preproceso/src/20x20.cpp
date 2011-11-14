@@ -1,40 +1,33 @@
 #include <iostream>
 #include <vector>
+#include <unistd.h>
+#include <cstdlib>
+#include "matrix.h"
 using namespace std;
 
-template<class T>
-struct matrix3d{
-	typedef T value_type;
-	typedef T* pointer;
-	typedef const T* const_pointer;
-	typedef T& reference;
-	typedef const T& const_reference;
-
-	//value_type *buffer;
-	std::vector<value_type> buffer;
-	const size_t row, column, depth;
-	matrix3d(size_t row, size_t column, size_t depth):
-		row(row), column(column), depth(depth)
-	{
-		buffer.resize( row*column*depth );
+void usage (int status)
+{
+	if (status != EXIT_SUCCESS)
+		cerr << "Try \'-h\' for more information.\n";
+	else{
+		cerr << "Usage: program.bin < infile > outfile\n";
+		cerr << "Captura un cuadrado de 20x20 del centro de la imagen\n" << 
+		"-h \t Ayuda del programa\n";
 	}
 
-	pointer data(){
-		return &buffer[0];
-	}
-
-	reference operator()(size_t x, size_t y, size_t z){
-		return buffer[ x*column*depth + y*column + z ];
-	}
-
-	size_t size() const{
-		return buffer.size();
-	}
-	//const_reference operator()(size_t x, size_t y, size_t z) const;
-
-};
+	exit (status);
+}
 
 int main(int argc, char **argv){
+
+	int option;
+	while( (option=getopt(argc, argv, "h")) != -1 ){
+		switch(option){
+		case 'h': usage(EXIT_SUCCESS); break;
+		default: usage(EXIT_FAILURE);
+		}
+	}
+
 	typedef unsigned char byte;
 	int magic, row, column, n;
 	cin.read( (char *) &magic, sizeof(magic) );
